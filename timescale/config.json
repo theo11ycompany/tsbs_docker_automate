@@ -1,0 +1,27 @@
+{
+    "tests": [
+        {
+            "__comments": "The go file runs the docker file with resources and notes the host details. This is later fed into the testing shell scipt.",
+            "docker_file": ".",
+            "docker_image_name": "clickhouse_config",
+            "docker_config": {
+                "memory": "1500m",
+                "cpus": "2"
+            },
+            "test_shell_file_path": "./basic.sh",
+            "tsbs_configs": [
+                {
+                    "seed": "",
+                    "scale": "",
+                    "days_delta": "",
+                    "log_interval": "",
+                    "target_database": "",
+                    "query_type": "",
+                    "queries": "",
+                    "password": "",
+                    "username": ""
+                }
+            ]
+        }
+    ]
+}

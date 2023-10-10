@@ -3,7 +3,7 @@
       {
          "__comments": "The go file runs the docker file with resources and notes the host details. This is later fed into the testing shell scipt.",
          "docker_file": ".",
-         "docker_image_name": "clickhouse_config",
+         "docker_image_name": "timescaledb",
          "docker_config": {
             "memory": "1500m",
             "cpus": "2"
