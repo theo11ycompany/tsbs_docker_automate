@@ -189,10 +189,10 @@ echo "generating queries..."
     --queries=$queries --query-type=$query_type --format=$target \
     | gzip > /tmp/`echo "$target-query"`.gz
 
-echo "Loading data..."
-
-cat /tmp/`echo "$target-data"`.gz | gunzip |  ./tsbs_load_clickhouse --password $password > temp_data_insert_performance 
-
-echo "Running queries" 
-
-cat /tmp/`echo "$target-query"`.gz | gunzip |  ./tsbs_run_queries_clickhouse --password $password > temp_query_running_performance
+# echo "Loading data..."
+#
+# cat /tmp/`echo "$target-data"`.gz | gunzip |  ./tsbs_load_clickhouse `[ -z "$password" ] && echo "" || echo "--password $password"` > temp_data_insert_performance 
+#
+# echo "Running queries" 
+#
+# cat /tmp/`echo "$target-query"`.gz | gunzip |  ./tsbs_run_queries_clickhouse `[ -z "$password" ] && echo "" || echo "--password $password"` > temp_query_running_performance
