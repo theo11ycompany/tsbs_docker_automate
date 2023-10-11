@@ -2,7 +2,7 @@
    "tests": [
       {
          "docker_file": ".",
-         "docker_image_name": "clickhouse_config",
+         "docker_image_name": "timescaledb",
          "docker_config": {
             "memory": "250m",
             "cpus": "2"
