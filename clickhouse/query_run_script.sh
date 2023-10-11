@@ -72,5 +72,5 @@ handle_options() {
 
 handle_options "$@"
 
-cat /tmp/`echo "$target-data"`.gz | gunzip |  ./tsbs_load_clickhouse `[ -z "$password" ] && echo "" || echo "--password $password"` --workers=$workers
+cat /tmp/`echo "$target-data"`.gz | gunzip |  ./tsbs_run_queries_clickhouse `[ -z "$password" ] && echo "" || echo "--password $password"` --workers=$workers
 
