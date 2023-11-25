@@ -349,7 +349,7 @@ func main() {
 				fmt.Println("\t[INFO] Reusing previously generated data...")
 			} else {
 				fmt.Println("\t[INFO] Generating data and queries...")
-				// generate_cmd_from_tsbs_config(tsbs_gen_config)
+				generate_cmd_from_tsbs_config(tsbs_gen_config)
 			}
 			target := test_obj["target"].(string)
 			tsbs_run_config := test_obj["tsbs_run_config"].(map[string]interface{})
