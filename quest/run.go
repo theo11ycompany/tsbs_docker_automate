@@ -69,14 +69,18 @@ func map_equality(m1 map[string]interface{}, m2 map[string]interface{}) bool {
 		return false
 	}
 }
-func parse_load_results(stdout *bytes.Buffer, docker_cmd_opts map[string]interface{}, run_cmd_opts map[string]interface{}) {
+func parse_load_results(stdout *bytes.Buffer, docker_cmd_opts map[string]interface{}, run_cmd_opts map[string]interface{}, tsbs_gen_config map[string]interface{}) {
 	// println(docker_cmd_opts["cpus"].(string),overall_x_axis_verticals["cpus"])
 	cpus, _ := strconv.ParseFloat(docker_cmd_opts["cpus"].(string), 32)
 	memory, _ := strconv.ParseFloat(strings.Trim(docker_cmd_opts["memory"].(string), "m"), 32)
 	workers, _ := strconv.ParseFloat(run_cmd_opts["workers"].(string), 32)
+	scale, _ := strconv.ParseFloat(tsbs_gen_config["scale"].(string), 32)
+
 	overall_x_axis_verticals["cpus"] = append(overall_x_axis_verticals["cpus"], cpus)
 	overall_x_axis_verticals["memory"] = append(overall_x_axis_verticals["memory"], memory)
 	overall_x_axis_verticals["workers"] = append(overall_x_axis_verticals["workers"], workers)
+	overall_x_axis_verticals["scale"] = append(overall_x_axis_verticals["scale"], scale)
+
 	fin := false
 	single_test_records := [][]float64{} // we'll use this later
 	//find that one line thats empty
@@ -318,10 +322,11 @@ func main() {
 	overall_x_axis_verticals["cpus"] = []float64{}
 	overall_x_axis_verticals["memory"] = []float64{}
 	overall_x_axis_verticals["workers"] = []float64{}
+	overall_x_axis_verticals["scale"] = []float64{}
 	overall_y_axis_verticals["metrics/sec"] = []float64{}
 	overall_y_axis_verticals["rows/sec"] = []float64{}
 
-	dat, err := os.ReadFile("./config.json")
+	dat, err := os.ReadFile("./config_mem.json")
 	if err != nil {
 		println("err : ", err)
 	}
@@ -354,7 +359,7 @@ func main() {
 			target := test_obj["target"].(string)
 			tsbs_run_config := test_obj["tsbs_run_config"].(map[string]interface{})
 			stdout_buffer := load_cmd_from_tsbs_config(tsbs_run_config, target)
-			parse_load_results(&stdout_buffer, docker_config, tsbs_run_config)
+			parse_load_results(&stdout_buffer, docker_config, tsbs_run_config,tsbs_gen_config)
 			fmt.Println("\t[INFO] Stopping docker containers...")
 			DockerStopContainer(container_id)
 			time.Sleep(5 * time.Second)
@@ -367,30 +372,30 @@ func main() {
 
 }
 
-func parse_test(docker_cmd_opts map[string]interface{}, run_cmd_opts map[string]interface{}) {
-	output := `time,per. metric/s,metric total,overall metric/s,per. row/s,row total,overall row/s
-1699973783,1548249.47,1.548280E+07,1548249.47,137997.28,1.380000E+06,137997.28
-1699973793,1390843.33,2.939240E+07,1469543.87,123989.60,2.620000E+06,130993.21
-1699973803,1402564.97,4.341800E+07,1447218.39,125000.44,3.870000E+06,128995.70
-1699973813,1359159.27,5.700840E+07,1425205.61,121010.62,5.080000E+06,126999.61
-1699973823,1278397.62,6.979240E+07,1395844.04,113999.79,6.220000E+06,124399.65
-1699973833,1335973.64,8.315280E+07,1385865.25,118994.09,7.410000E+06,123498.69
-1699973843,1301441.86,9.616760E+07,1373804.58,115996.60,8.570000E+06,122426.94
-1699973853,1268276.55,1.088496E+08,1360614.42,113006.82,9.700000E+06,121249.50
-1699973863,1279850.58,1.216484E+08,1351640.51,113997.38,1.084000E+07,120443.70
-1699973873,1357513.34,1.352240E+08,1352227.81,120995.84,1.205000E+07,120498.91
-1699973883,1278904.58,1.480132E+08,1345562.04,113998.63,1.319000E+07,119907.98
-1699973893,1301543.59,1.610280E+08,1341894.03,116005.67,1.435000E+07,119582.80
-1699973903,1269184.81,1.737200E+08,1336300.98,112998.65,1.548000E+07,119076.32
-1699973913,1233743.97,1.860576E+08,1328975.42,109998.57,1.658000E+07,118427.91
-1699973923,1223574.88,1.982928E+08,1321949.05,109004.89,1.767000E+07,117799.74
-1699973933,1200359.22,2.102976E+08,1314348.99,106989.23,1.874000E+07,117124.02
-1699973943,1190380.74,2.222000E+08,1307057.60,106012.53,1.980000E+07,116470.48
+// func parse_test(docker_cmd_opts map[string]interface{}, run_cmd_opts map[string]interface{}) {
+// 	output := `time,per. metric/s,metric total,overall metric/s,per. row/s,row total,overall row/s
+// 1699973783,1548249.47,1.548280E+07,1548249.47,137997.28,1.380000E+06,137997.28
+// 1699973793,1390843.33,2.939240E+07,1469543.87,123989.60,2.620000E+06,130993.21
+// 1699973803,1402564.97,4.341800E+07,1447218.39,125000.44,3.870000E+06,128995.70
+// 1699973813,1359159.27,5.700840E+07,1425205.61,121010.62,5.080000E+06,126999.61
+// 1699973823,1278397.62,6.979240E+07,1395844.04,113999.79,6.220000E+06,124399.65
+// 1699973833,1335973.64,8.315280E+07,1385865.25,118994.09,7.410000E+06,123498.69
+// 1699973843,1301441.86,9.616760E+07,1373804.58,115996.60,8.570000E+06,122426.94
+// 1699973853,1268276.55,1.088496E+08,1360614.42,113006.82,9.700000E+06,121249.50
+// 1699973863,1279850.58,1.216484E+08,1351640.51,113997.38,1.084000E+07,120443.70
+// 1699973873,1357513.34,1.352240E+08,1352227.81,120995.84,1.205000E+07,120498.91
+// 1699973883,1278904.58,1.480132E+08,1345562.04,113998.63,1.319000E+07,119907.98
+// 1699973893,1301543.59,1.610280E+08,1341894.03,116005.67,1.435000E+07,119582.80
+// 1699973903,1269184.81,1.737200E+08,1336300.98,112998.65,1.548000E+07,119076.32
+// 1699973913,1233743.97,1.860576E+08,1328975.42,109998.57,1.658000E+07,118427.91
+// 1699973923,1223574.88,1.982928E+08,1321949.05,109004.89,1.767000E+07,117799.74
+// 1699973933,1200359.22,2.102976E+08,1314348.99,106989.23,1.874000E+07,117124.02
+// 1699973943,1190380.74,2.222000E+08,1307057.60,106012.53,1.980000E+07,116470.48
 
-Summary:
-loaded 232704000 metrics in 177.829sec with 10 workers (mean rate 1308584.92 metrics/sec)
-loaded 20736000 rows in 177.829sec with 10 workers (mean rate 116606.58 rows/sec)`
-	mocking_stdout := []byte(output)
-	parse_load_results(bytes.NewBuffer(mocking_stdout), docker_cmd_opts, run_cmd_opts)
-}
+// Summary:
+// loaded 232704000 metrics in 177.829sec with 10 workers (mean rate 1308584.92 metrics/sec)
+// loaded 20736000 rows in 177.829sec with 10 workers (mean rate 116606.58 rows/sec)`
+// 	mocking_stdout := []byte(output)
+// 	parse_load_results(bytes.NewBuffer(mocking_stdout), docker_cmd_opts, run_cmd_opts)
+// }
 

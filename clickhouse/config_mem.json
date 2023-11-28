@@ -183,6 +183,52 @@
             "password": "",
             "workers": "10"
          }
+      },
+      {
+         "docker_file": ".",
+         "docker_image_name": "clickhouse",
+         "docker_config": {
+            "memory": "5500m",
+            "cpus": "2"
+         },
+         "target": "clickhouse",
+         "tsbs_gen_config": {
+            "seed": "123",
+            "scale": "400",
+            "log_interval": "30s",
+            "target": "clickhouse",
+            "query_type": "groupby-orderby-limit",
+            "queries": "1000",
+            "start_date": "2023-09-23T00:00:00Z",
+            "end_date": "2023-09-25T00:00:00Z"
+         },
+         "tsbs_run_config": {
+            "password": "",
+            "workers": "10"
+         }
+      },
+      {
+         "docker_file": ".",
+         "docker_image_name": "clickhouse",
+         "docker_config": {
+            "memory": "6000m",
+            "cpus": "2"
+         },
+         "target": "clickhouse",
+         "tsbs_gen_config": {
+            "seed": "123",
+            "scale": "400",
+            "log_interval": "30s",
+            "target": "clickhouse",
+            "query_type": "groupby-orderby-limit",
+            "queries": "1000",
+            "start_date": "2023-09-23T00:00:00Z",
+            "end_date": "2023-09-25T00:00:00Z"
+         },
+         "tsbs_run_config": {
+            "password": "",
+            "workers": "10"
+         }
       }
    ]
 }
